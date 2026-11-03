@@ -21,17 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-$("td.name").each(function () {
-  var td = $(this);
+document.querySelectorAll("td.name").forEach((td) => {
+  const release = td.querySelector("a[title]");
+  const abstract = td.nextElementSibling;
+  if (!release || !abstract) return;
 
-  var a = td.find("a");
-  var author = a.attr("title").replace(/\/.*/, "");
-  var not_indexed = a.attr("href").includes(`/release/${author}/`);
-  if (not_indexed) {
-    a.css('color', '#ff0000');
-  }
+  const title = release.getAttribute("title");
+  const separator = title.indexOf("/");
+  if (separator <= 0) return;
 
-  var next = td.next();
-  var text = next.text();
-  next.html(`<a href="https://metacpan.org/author/${author}">${author}</a> - ${text}`);
+  const author = title.slice(0, separator);
+  const link = document.createElement("a");
+  link.href = `https://metacpan.org/author/${encodeURIComponent(author)}`;
+  link.textContent = author;
+  abstract.prepend(link, " - ");
 });
